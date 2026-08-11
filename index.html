@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meme Generator // meme-generator.slippylabs.com</title>
+<meta name="description" content="Add classic outlined meme captions to any image and download the result as a PNG. Drag to position, auto-wrap and auto-shrink, nothing uploaded.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2234%22%20r%3D%2222%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2216%22%20r%3D%228%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2244%22%20cy%3D%2216%22%20r%3D%228%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#050b10">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="scanlines"></div>
+
+<main class="page-wrap">
+  <div class="hud-panel wide">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="callsign-row">
+      <div class="toad-avatar-wrap">
+        <svg class="toad-avatar" width="46" height="46" viewBox="0 0 64 64">
+          <circle cx="32" cy="34" r="22" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="44" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="3.5" fill="#050b10"/>
+          <circle cx="44" cy="16" r="3.5" fill="#050b10"/>
+          <ellipse cx="24" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <ellipse cx="40" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <circle cx="24" cy="30" r="1.4" fill="#39ff8f"/>
+          <circle cx="40" cy="30" r="1.4" fill="#39ff8f"/>
+          <path d="M22 42 Q32 48 42 42" stroke="#050b10" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="lock-reticle"></div>
+      </div>
+      <span class="callsign">Workshop Division // Tool</span>
+      <div class="nav-links">
+        <a href="https://projects.slippylabs.com/" class="logout-link">&larr; Archive</a>
+      </div>
+    </div>
+
+    <h1>MEME GENERATOR</h1>
+    <p class="subtitle">Drop in an image, type your caption, drag it where you want it, and download the PNG. Classic outlined block caps, entirely on your own machine.</p>
+
+    <div class="tool-controls">
+      <input class="tool-file-input" id="img-input" type="file" accept="image/*">
+      <button class="tool-btn ghost" id="blank-btn">Blank Canvas</button>
+      <button class="tool-btn" id="download-btn">Download PNG</button>
+    </div>
+
+    <div class="two-col">
+      <div class="tool-field-row">
+        <label class="tool-field-label" for="top-text">Top caption</label>
+        <input class="tool-text-input" id="top-text" type="text" value="ONE DOES NOT SIMPLY">
+      </div>
+      <div class="tool-field-row">
+        <label class="tool-field-label" for="bottom-text">Bottom caption</label>
+        <input class="tool-text-input" id="bottom-text" type="text" value="SHIP WITHOUT TESTING">
+      </div>
+    </div>
+
+    <div class="tool-controls">
+      <label class="tool-field-label" for="font-select">Font</label>
+      <select class="tool-select" id="font-select">
+        <option value='Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif'>Impact (classic)</option>
+        <option value='"Arial Black", "Helvetica Neue", sans-serif'>Arial Black</option>
+        <option value='Georgia, "Times New Roman", serif'>Serif</option>
+        <option value='"Consolas", "SFMono-Regular", Menlo, monospace'>Monospace</option>
+      </select>
+      <label class="tool-field-label" for="fill-color">Fill</label>
+      <input class="tool-color-input" id="fill-color" type="color" value="#ffffff">
+      <label class="tool-field-label" for="stroke-color">Outline</label>
+      <input class="tool-color-input" id="stroke-color" type="color" value="#000000">
+    </div>
+
+    <div class="tool-field-row">
+      <label class="tool-field-label" for="size-slider">Caption size &mdash; <span id="size-label">10</span>% of image height</label>
+      <div class="tool-slider-row">
+        <input type="range" id="size-slider" min="3" max="22" value="10">
+      </div>
+    </div>
+
+    <div class="tool-field-row">
+      <label class="tool-field-label" for="stroke-slider">Outline thickness &mdash; <span id="stroke-label">14</span>%</label>
+      <div class="tool-slider-row">
+        <input type="range" id="stroke-slider" min="0" max="40" value="14">
+      </div>
+    </div>
+
+    <div class="tool-checks">
+      <label class="tool-check"><input type="checkbox" id="caps-check" checked> Force ALL CAPS</label>
+      <label class="tool-check"><input type="checkbox" id="shadow-check"> Drop shadow</label>
+    </div>
+
+    <div class="canvas-frame">
+      <canvas id="meme-canvas"></canvas>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-tile"><span class="stat-value" id="stat-size">&mdash;</span><span class="stat-label">Output Size</span></div>
+      <div class="stat-tile"><span class="stat-value" id="stat-bytes">&mdash;</span><span class="stat-label">PNG Weight</span></div>
+    </div>
+
+    <p class="tool-note">Drag either caption on the preview to move it. Text wraps to fit the width automatically and shrinks further if it would run off the image. Nothing is uploaded &mdash; the picture is drawn on a local canvas and the download comes straight out of it.</p>
+
+    <div class="comm-window">
+      <div class="comm-portrait">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="34" r="22" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="44" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="3.5" fill="#050b10"/>
+          <circle cx="44" cy="16" r="3.5" fill="#050b10"/>
+          <ellipse cx="24" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <ellipse cx="40" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <circle cx="24" cy="30" r="1.4" fill="#39ff8f"/>
+          <circle cx="40" cy="30" r="1.4" fill="#39ff8f"/>
+          <path d="M22 42 Q32 48 42 42" stroke="#050b10" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="comm-body">
+        <div class="comm-label"><span class="dot"></span> Incoming Transmission &mdash; Slippy</div>
+        <p>"Impact font. Bold outline. Some traditions do not need improving."</p>
+      </div>
+    </div>
+
+    <a href="https://projects.slippylabs.com/" class="hud-btn">&larr; Back to Archive</a>
+  </div>
+</main>
+
+<script>
+const MAX_WIDTH = 1400;
+
+const canvas = document.getElementById('meme-canvas');
+const ctx = canvas.getContext('2d');
+const imgInput = document.getElementById('img-input');
+const sizeSlider = document.getElementById('size-slider');
+const strokeSlider = document.getElementById('stroke-slider');
+const fontSelect = document.getElementById('font-select');
+const capsCheck = document.getElementById('caps-check');
+const shadowCheck = document.getElementById('shadow-check');
+
+let sourceImage = null;
+// Positions are stored as fractions of the canvas so they survive image swaps.
+const captions = {
+  top: { inputId: 'top-text', xFrac: 0.5, yFrac: 0.02, anchor: 'top', box: null },
+  bottom: { inputId: 'bottom-text', xFrac: 0.5, yFrac: 0.98, anchor: 'bottom', box: null },
+};
+
+function blankImage() {
+  const c = document.createElement('canvas');
+  c.width = 800; c.height = 600;
+  const g = c.getContext('2d');
+  const grad = g.createLinearGradient(0, 0, 0, 600);
+  grad.addColorStop(0, '#123a2c');
+  grad.addColorStop(1, '#050b10');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 800, 600);
+  return c;
+}
+
+function setImage(img) {
+  sourceImage = img;
+  const scale = Math.min(1, MAX_WIDTH / img.width);
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  document.getElementById('stat-size').textContent = canvas.width + '×' + canvas.height;
+  draw();
+}
+
+imgInput.addEventListener('change', () => {
+  const file = imgInput.files && imgInput.files[0];
+  if (!file) return;
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => { URL.revokeObjectURL(url); setImage(img); };
+  img.src = url;
+});
+
+document.getElementById('blank-btn').addEventListener('click', () => {
+  imgInput.value = '';
+  setImage(blankImage());
+});
+
+function wrapLines(text, maxWidth) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width <= maxWidth || !line) {
+      line = test;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function layoutCaption(text, maxWidth, maxHeight, startPx) {
+  // Shrink until the wrapped block fits both the width of a single word and
+  // the height budget, so a long caption never runs off the picture.
+  let px = startPx;
+  for (let attempt = 0; attempt < 40; attempt++) {
+    ctx.font = '700 ' + px + 'px ' + fontSelect.value;
+    const lines = wrapLines(text, maxWidth);
+    const lineH = px * 1.1;
+    const widest = lines.reduce((m, l) => Math.max(m, ctx.measureText(l).width), 0);
+    if (lines.length * lineH <= maxHeight && widest <= maxWidth) {
+      return { lines: lines, px: px, lineH: lineH, width: widest };
+    }
+    px = Math.floor(px * 0.92);
+    if (px < 8) break;
+  }
+  ctx.font = '700 ' + px + 'px ' + fontSelect.value;
+  return { lines: wrapLines(text, maxWidth), px: px, lineH: px * 1.1, width: maxWidth };
+}
+
+function drawCaption(cap) {
+  let text = document.getElementById(cap.inputId).value;
+  cap.box = null;
+  if (!text.trim()) return;
+  if (capsCheck.checked) text = text.toUpperCase();
+
+  const maxWidth = canvas.width * 0.94;
+  const maxHeight = canvas.height * 0.45;
+  const startPx = Math.round(canvas.height * (parseInt(sizeSlider.value, 10) / 100));
+  const layout = layoutCaption(text, maxWidth, maxHeight, startPx);
+
+  const blockH = layout.lines.length * layout.lineH;
+  const cx = cap.xFrac * canvas.width;
+  let top = cap.anchor === 'top'
+    ? cap.yFrac * canvas.height
+    : cap.yFrac * canvas.height - blockH;
+  top = Math.max(0, Math.min(canvas.height - blockH, top));
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  ctx.fillStyle = document.getElementById('fill-color').value;
+  ctx.strokeStyle = document.getElementById('stroke-color').value;
+  const strokePct = parseInt(strokeSlider.value, 10) / 100;
+  ctx.lineWidth = layout.px * strokePct;
+
+  if (shadowCheck.checked) {
+    ctx.shadowColor = 'rgba(0,0,0,0.65)';
+    ctx.shadowBlur = layout.px * 0.18;
+    ctx.shadowOffsetY = layout.px * 0.08;
+  } else {
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+  }
+
+  layout.lines.forEach((line, i) => {
+    const y = top + i * layout.lineH;
+    if (ctx.lineWidth > 0) ctx.strokeText(line, cx, y);
+    ctx.fillText(line, cx, y);
+  });
+
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
+
+  cap.box = { x: cx - layout.width / 2, y: top, w: layout.width, h: blockH };
+}
+
+// canvas.toBlob is async, so a slow encode from an earlier draw can land after
+// a newer one. Each draw takes a token and stale callbacks are ignored.
+let sizeToken = 0;
+function updateWeight() {
+  const token = ++sizeToken;
+  canvas.toBlob((blob) => {
+    if (!blob || token !== sizeToken) return;
+    document.getElementById('stat-bytes').textContent = (blob.size / 1024).toFixed(1) + ' KB';
+  }, 'image/png');
+}
+
+function draw() {
+  if (!sourceImage) return;
+  document.getElementById('size-label').textContent = sizeSlider.value;
+  document.getElementById('stroke-label').textContent = strokeSlider.value;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+  drawCaption(captions.top);
+  drawCaption(captions.bottom);
+  updateWeight();
+}
+
+['top-text', 'bottom-text'].forEach(id => document.getElementById(id).addEventListener('input', draw));
+[sizeSlider, strokeSlider].forEach(el => el.addEventListener('input', draw));
+[fontSelect, capsCheck, shadowCheck, document.getElementById('fill-color'), document.getElementById('stroke-color')]
+  .forEach(el => el.addEventListener('change', draw));
+document.getElementById('fill-color').addEventListener('input', draw);
+document.getElementById('stroke-color').addEventListener('input', draw);
+
+// ---------- dragging ----------
+let dragging = null;
+
+function canvasPoint(evt) {
+  const rect = canvas.getBoundingClientRect();
+  const src = evt.touches ? evt.touches[0] : evt;
+  return {
+    x: (src.clientX - rect.left) * (canvas.width / rect.width),
+    y: (src.clientY - rect.top) * (canvas.height / rect.height),
+  };
+}
+
+function pickCaption(pt) {
+  // Bottom first so it wins when the two blocks overlap.
+  for (const key of ['bottom', 'top']) {
+    const box = captions[key].box;
+    if (box && pt.x >= box.x && pt.x <= box.x + box.w && pt.y >= box.y && pt.y <= box.y + box.h) {
+      return captions[key];
+    }
+  }
+  return null;
+}
+
+function startDrag(evt) {
+  const pt = canvasPoint(evt);
+  const cap = pickCaption(pt);
+  if (!cap) return;
+  dragging = cap;
+  canvas.style.cursor = 'grabbing';
+  evt.preventDefault();
+}
+
+function moveDrag(evt) {
+  if (!dragging) return;
+  const pt = canvasPoint(evt);
+  const box = dragging.box;
+  dragging.xFrac = Math.min(0.95, Math.max(0.05, pt.x / canvas.width));
+  const targetY = dragging.anchor === 'top' ? pt.y - box.h / 2 : pt.y + box.h / 2;
+  dragging.yFrac = Math.min(1, Math.max(0, targetY / canvas.height));
+  draw();
+  evt.preventDefault();
+}
+
+function endDrag() {
+  dragging = null;
+  canvas.style.cursor = '';
+}
+
+canvas.addEventListener('mousedown', startDrag);
+window.addEventListener('mousemove', moveDrag);
+window.addEventListener('mouseup', endDrag);
+canvas.addEventListener('touchstart', startDrag, { passive: false });
+canvas.addEventListener('touchmove', moveDrag, { passive: false });
+canvas.addEventListener('touchend', endDrag);
+
+document.getElementById('download-btn').addEventListener('click', () => {
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'meme.png';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/png');
+});
+
+setImage(blankImage());
+</script>
+</body>
+</html>
